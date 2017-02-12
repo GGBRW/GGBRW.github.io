@@ -2146,7 +2146,6 @@ class Wire {
 
         if(this.to && this.to.value != this.value) {
             this.to.value = this.value;
-            console.log(this.to.component.name);
             setTimeout(() => this.to.component.update());
         }
     }
