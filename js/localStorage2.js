@@ -96,7 +96,8 @@ const constructors = {
     Input,Output,NOT,AND,OR,XOR,
     Button,Constant,Delay,Clock,Key,Debug,
     Beep,Counter,LED,Display,
-    Custom
+    Custom, TimerStart, TimerEnd,
+    BinaryToDecimal, DecimalToBinary
 };
 
 /*
@@ -309,8 +310,12 @@ function parse(data) {
             wire.output[i] = wires[wire.output[i]];
         }
 
-        if(wire.from && wire.to) connect(wire.from,wire.to,wire);
+        if(wire.from && wire.to) {
+            connect(wire.from,wire.to,wire);
+        }
     }
+
+    updateQueue = [];
 
     if(selection) {
         selection = {
@@ -343,7 +348,7 @@ function saveBoard(
 ) {
     let data = stringify(components_,wires_);
 
-    name = name || "PWS-Save-" + new Date().toLocaleString();
+    name = name || "BOOLR-Save-" + new Date().toLocaleString();
     document.title = "BOOLR | " + name;
 
     // Export data as .board file

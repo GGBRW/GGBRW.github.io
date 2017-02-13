@@ -1,1 +1,2 @@
-# GGBRW.github.io
+# BOOLR
+A digital logic simulator

@@ -11,27 +11,107 @@ function add(
     component,
     x = component.pos.x,
     y = component.pos.y,
-    force = false
+    force = false,
+    undoable = false
 ) {
+
     if(!findPortByPos(x,y) && !findWireByPos(x,y) || force) {
         components.push(component);
+
+        if(undoable) {
+            redoStack = [];
+
+            undoStack.push(() => {
+                removeComponent(component);
+
+                redoStack.push(add.bind(null,...arguments));
+            });
+        }
+
+        // TODO: update inputs
+
         return true;
     }
     return false;
 }
 
 /*
+ Adds selection to the board
+ @param {array} components
+ @param {array} wires
+ @param {number} x
+ @param {number} y
+ @param {object} [selection]
+ */
+function addSelection(
+    components,
+    wires,
+    selection,
+    x,
+    y,
+    undoable = false
+) {
+
+    window.components.push(...components);
+
+    for(let i = 0; i < wires.length; ++i) {
+        const wire = wires[i];
+        connect(wire.from,wire.to,wire);
+        for(let i = 0; i < wire.input.length; ++i) {
+            connectWires(wire.input[i],wire);
+        }
+
+        for(let i = 0; i < wire.output.length; ++i) {
+            connectWires(wire,wire.output[i]);
+        }
+
+        window.wires.push(wire);
+    }
+
+    if(selection) {
+        if(x == undefined) x = selection.x;
+        if(y == undefined) y = selection.y;
+
+        selecting = Object.assign({}, selection);
+        selecting.x = x;
+        selecting.y = y;
+        selecting.components = [...components];
+        selecting.wires = [...wires];
+
+        contextMenu.show(
+            selecting.x + selecting.w,
+            selecting.y + selecting.h
+        );
+    }
+
+    if(undoable) {
+        redoStack = [];
+
+        undoStack.push(() => {
+            removeSelection(components,wires);
+            selecting = null;
+            contextMenu.hide();
+
+            redoStack.push(addSelection.bind(null,...arguments));
+        });
+    }
+}
+
+/*
 Removes component from the board
 @param {object} component
  */
-function remove(component) {
+function removeComponent(component,undoable = false) {
     if(!component) return;
+
+    const removedWires = [];
 
     for(let i = 0; i < component.input.length; ++i) {
         // Remove connections
         const wire = component.input[i].connection;
         if(wire) {
-            removeWire(wire);
+            const removed = removeWire(wire);
+            removedWires.push(...removed);
         }
     }
 
@@ -39,7 +119,8 @@ function remove(component) {
         // Remove connections
         const wire = component.output[i].connection;
         if(wire) {
-            removeWire(wire);
+            const removed = removeWire(wire);
+            removedWires.push(...removed);
         }
     }
 
@@ -47,14 +128,51 @@ function remove(component) {
 
     const index = components.indexOf(component);
     index > -1 && components.splice(index,1);
+
+    if(undoable) {
+        redoStack = [];
+
+        undoStack.push(() => {
+            add(component);
+            for(let i = 0; i < removedWires.length; ++i) {
+                const wire = removedWires[i];
+                connect(wire.from,wire.to,wire);
+                for(let i = 0; i < wire.input.length; ++i) {
+                    connectWires(wire.input[i],wire);
+                }
+
+                for(let i = 0; i < wire.output.length; ++i) {
+                    connectWires(wire,wire.output[i]);
+                }
+
+                wires.push(wire);
+            }
+
+            redoStack.push(removeComponent.bind(null,...arguments));
+        });
+    }
+
+    return {
+        component,
+        wires: removedWires
+    };
 }
 
-function removeWire(wire) {
+function removeWire(wire, undoable = false) {
+    const removedWires = [wire];
+
     const from = wire.from;
     const to = wire.to;
-
-    from && delete from.connection;
-    to && delete to.connection;
+    
+    if(from) {
+        delete from.connection;
+    }
+    
+    if(to) {
+        delete to.connection;
+        to.value = 0;
+        to.component.update();
+    }
 
     //delete wire.from;
     //delete wire.to;
@@ -63,7 +181,10 @@ function removeWire(wire) {
         const index = wire.input[i].output.indexOf(wire);
         if(index > -1) {
             wire.input[i].output.splice(index,1);
-            if(!wire.input[i].to) removeWire(wire.input[i]);
+            if(!wire.input[i].to) {
+                const removed = removeWire(wire.input[i]);
+                removedWires.push(...removed);
+            }
         }
     }
 
@@ -71,18 +192,85 @@ function removeWire(wire) {
         const index = wire.output[i].input.indexOf(wire);
         if(index > -1) {
             wire.output[i].input.splice(index,1);
-            if(!wire.output[i].from) removeWire(wire.output[i]);
+            if(!wire.output[i].from) {
+                const removed = removeWire(wire.output[i]);
+                removedWires.push(...removed);
+            }
         }
     }
 
     const index = wires.indexOf(wire);
     if(index > -1) wires.splice(index,1);
+
+    if(undoable) {
+        redoStack = [];
+
+        undoStack.push(() => {
+            for(let i = 0; i < removedWires.length; ++i) {
+                const wire = removedWires[i];
+                connect(wire.from,wire.to,wire);
+                for(let i = 0; i < wire.input.length; ++i) {
+                    connectWires(wire.input[i],wire);
+                }
+
+                for(let i = 0; i < wire.output.length; ++i) {
+                    connectWires(wire,wire.output[i]);
+                }
+
+                wires.push(wire);
+            }
+
+            redoStack.push(removeWire.bind(null,...arguments));
+        });
+    }
+
+    return removedWires;
 }
 
-function removeSelection(components,wires) {
+function removeSelection(components, wires, undoable = false) {
+    const removedComponents = [];
+    const removedWires = [];
+
     for(let i = 0; i < components.length; ++i) {
-        remove(components[i]);
+        const removed = removeComponent(components[i]);
+        removedComponents.push(removed.component);
+        removedWires.push(...removed.wires);
     }
+
+    const selection = selecting;
+
+    if(undoable) {
+        redoStack = [];
+
+        undoStack.push(() => {
+            addSelection(
+                components,
+                wires,
+                selection,
+                undefined,undefined
+            )
+
+            for(let i = 0; i < removedWires.length; ++i) {
+                const wire = removedWires[i];
+                connect(wire.from,wire.to,wire);
+                for(let i = 0; i < wire.input.length; ++i) {
+                    connectWires(wire.input[i],wire);
+                }
+
+                for(let i = 0; i < wire.output.length; ++i) {
+                    connectWires(wire,wire.output[i]);
+                }
+            }
+
+            redoStack.push(removeSelection.bind(null,...arguments));
+        });
+    }
+
+    return {
+        components: removedComponents,
+        wires: removedWires,
+        selection
+    };
 }
 
 /*
@@ -91,7 +279,7 @@ Connects two components with a wire
 @param {object} input port of component 2
 @param {object} wire
  */
-function connect(from,to,wire) {
+function connect(from, to, wire, undoable = false) {
     if(to) {
         to.connection = wire;
         wire.to = to;
@@ -99,8 +287,20 @@ function connect(from,to,wire) {
     if(from) {
         from.connection = wire;
         wire.from = from;
+    }
 
-        from.component.update();
+    if(undoable) {
+        redoStack = [];
+
+        undoStack.push(() => {
+            removeWire(wire);
+
+            redoStack.push(() => {
+                connect.call(null,...arguments);
+
+                if(!wires.includes(wire)) wires.push(wire);
+            });
+        });
     }
 }
 
@@ -111,7 +311,7 @@ function connect(from,to,wire) {
  @param {number} x coordinate of intersection
  @param {number} y coordinate of intersection
  */
-function connectWires(wire1,wire2) {
+function connectWires(wire1, wire2, undoable = false) {
     if(!wire1 || !wire2) return;
 
     if(!wire1.output.includes(wire2)) {
@@ -121,10 +321,313 @@ function connectWires(wire1,wire2) {
         wire2.input.push(wire1);
     }
 
+    const colorOn = wire2.colorOn;
+    const colorOff = wire2.colorOff;
+
     wire2.colorOn = wire1.colorOn;
     wire2.colorOff = wire1.colorOff;
 
     wire2.update(wire1.value);
+
+    if(undoable) {
+        redoStack = [];
+
+        undoStack.push(() => {
+            const outputIndex = wire1.output.indexOf(wire2);
+            if(outputIndex > -1) wire1.output.splice(outputIndex);
+
+            if(!wire2.to && wire2.output.length < 1) removeWire(wire2);
+
+            const inputIndex = wire2.input.indexOf(wire1);
+            if(inputIndex > -1) wire2.input.splice(inputIndex);
+            wire2.colorOn = colorOn;
+            wire2.colorOff = colorOff;
+
+            if(!wire1.from && wire1.input.length < 1) removeWire(wire1);
+
+            redoStack.push(() => {
+                connectWires.call(null,...arguments);
+
+                if(!wires.includes(wire1)) wires.push(wire1);
+                if(!wires.includes(wire2)) wires.push(wire2);
+            });
+        });
+    }
+}
+
+/*
+ Moves component
+ @param {object} component
+ @param {number} x
+ @param {number} y
+ @param value
+ */
+function moveComponent(component, x = component.pos.x, y = component.pos.y, undoable = false) {
+    const oldPos = Object.assign(
+        {},
+        dragging && dragging.component == component ? dragging.pos : component.pos
+    );
+
+    const dx = x - oldPos.x;
+    const dy = y - oldPos.y;
+
+    component.pos.x = x;
+    component.pos.y = y;
+
+    let oldInputWirePos = [];
+    for(let i = 0; i < component.input.length; ++i) {
+        const wire = component.input[i].connection;
+        if(wire) {
+            if(undoable) {
+                oldInputWirePos.push([...wire.pos]);
+            }
+
+            let dx = wire.pos.slice(-1)[0].x - wire.pos.slice(-2)[0].x;
+            let dy = wire.pos.slice(-1)[0].y - wire.pos.slice(-2)[0].y;
+
+            const index = wire.pos.findIndex(
+                (pos,i) => i < wire.pos.length - 1 && pos.x == wire.pos.slice(-1)[0].x && pos.y == wire.pos.slice(-1)[0].y
+            );
+
+            if(index > -1) {
+                wire.pos.splice(index + 1,wire.pos.length);
+                continue;
+            }
+
+            while(Math.abs(dx) + Math.abs(dy) > 0) {
+                let sdx = 0;
+                let sdy = 0;
+                if(Math.abs(dx) > Math.abs(dy)) {
+                    sdx = Math.sign(dx);
+                } else {
+                    sdy = Math.sign(dy);
+                }
+
+                wire.pos.splice(
+                    wire.pos.length - 1, 0,
+                    {
+                        x: wire.pos.slice(-2)[0].x + sdx,
+                        y: wire.pos.slice(-2)[0].y + sdy
+                    }
+                );
+                dx -= sdx;
+                dy -= sdy;
+            }
+        }
+    }
+
+    let oldOutputWirePos = [];
+    for(let i = 0; i < component.output.length; ++i) {
+        const wire = component.output[i].connection;
+        if(wire) {
+            if(undoable) {
+                oldOutputWirePos.push([...wire.pos]);
+            }
+
+            let dx = wire.pos[0].x - wire.pos[1].x;
+            let dy = wire.pos[0].y - wire.pos[1].y;
+
+            const index = wire.pos.findIndex(
+                (pos,i) => i > 0 && pos.x == wire.pos[0].x && pos.y == wire.pos[0].y
+            );
+
+            if(index > -1) {
+                wire.pos.splice(1,index);
+                continue;
+            }
+
+            while(Math.abs(dx) + Math.abs(dy) > 0) {
+                let sdx = 0;
+                let sdy = 0;
+                if(Math.abs(dx) > Math.abs(dy)) {
+                    sdx = Math.sign(dx);
+                } else {
+                    sdy = Math.sign(dy);
+                }
+
+                wire.pos.splice(
+                    1, 0,
+                    {
+                        x: wire.pos[1].x + sdx,
+                        y: wire.pos[1].y + sdy
+                    }
+                );
+                dx -= sdx;
+                dy -= sdy;
+            }
+        }
+    }
+
+    if(undoable) {
+        redoStack = [];
+
+        undoStack.push(() => {
+            component.pos.x = oldPos.x;
+            component.pos.y = oldPos.y;
+
+            for(let i = 0; i < component.input.length; ++i) {
+                const wire = component.input[i].connection;
+                if(wire) {
+                    wire.pos = oldInputWirePos[i];
+                    wire.pos.slice(-1)[0].x -= dx;
+                    wire.pos.slice(-1)[0].y -= dy;
+                }
+            }
+
+            for(let i = 0; i < component.output.length; ++i) {
+                const wire = component.output[i].connection;
+                if(wire) {
+                    wire.pos = oldOutputWirePos[i];
+                    wire.pos[0].x -= dx;
+                    wire.pos[0].y -= dy;
+                }
+            }
+
+            redoStack.push(moveComponent.bind(null,...arguments));
+        });
+    }
+}
+
+function movePort() {
+
+}
+
+function moveSelection(
+    components,
+    wires,
+    dx,dy,
+    undoable = false
+) {
+    for(let i = 0; i < components.length; ++i) {
+        const component = components[i];
+        component.pos.x += dx;
+        component.pos.y += dy;
+
+        for(let i = 0; i < component.input.length; ++i) {
+            const wire = component.input[i].connection;
+            if(wire && !wires.includes(wire)) {
+                wire.pos.slice(-1)[0].x += dx;
+                wire.pos.slice(-1)[0].y += dy;
+                let wdx = wire.pos.slice(-1)[0].x - wire.pos.slice(-2)[0].x;
+                let wdy = wire.pos.slice(-1)[0].y - wire.pos.slice(-2)[0].y;
+
+                const index = wire.pos.findIndex(
+                    (pos,i) => i < wire.pos.length - 1 && pos.x == wire.pos.slice(-1)[0].x && pos.y == wire.pos.slice(-1)[0].y
+                );
+
+                if(index > -1) {
+                    wire.pos.splice(index + 1,wire.pos.length);
+                    continue;
+                }
+
+                while(Math.abs(wdx) + Math.abs(wdy) > 0) {
+                    let sdx = 0;
+                    let sdy = 0;
+                    if(Math.abs(wdx) > Math.abs(wdy)) {
+                        sdx = Math.sign(wdx);
+                    } else {
+                        sdy = Math.sign(wdy);
+                    }
+
+                    wire.pos.splice(
+                        wire.pos.length - 1, 0,
+                        {
+                            x: wire.pos.slice(-2)[0].x + sdx,
+                            y: wire.pos.slice(-2)[0].y + sdy
+                        }
+                    );
+                    wdx -= sdx;
+                    wdy -= sdy;
+                }
+            }
+        }
+
+        for(let i = 0; i < component.output.length; ++i) {
+            const wire = component.output[i].connection;
+            if(wire && !wires.includes(wire)) {
+                wire.pos[0].x += dx;
+                wire.pos[0].y += dy;
+                let wdx = wire.pos[0].x - wire.pos[1].x;
+                let wdy = wire.pos[0].y - wire.pos[1].y;
+
+                const index = wire.pos.findIndex(
+                    (pos,i) => i > 0 && pos.x == wire.pos[0].x && pos.y == wire.pos[0].y
+                );
+
+                if(index > -1) {
+                    wire.pos.splice(1,index);
+                    continue;
+                }
+
+                while(Math.abs(wdx) + Math.abs(wdy) > 0) {
+                    let sdx = 0;
+                    let sdy = 0;
+                    if(Math.abs(wdx) > Math.abs(wdy)) {
+                        sdx = Math.sign(wdx);
+                    } else {
+                        sdy = Math.sign(wdy);
+                    }
+
+                    wire.pos.splice(
+                        1, 0,
+                        {
+                            x: wire.pos[1].x + sdx,
+                            y: wire.pos[1].y + sdy
+                        }
+                    );
+                    wdx -= sdx;
+                    wdy -= sdy;
+                }
+            }
+        }
+    }
+
+    for(let i = 0; i < wires.length; ++i) {
+        const wire = wires[i];
+        for(let j = 0; j < wire.pos.length; ++j) {
+            wire.pos[j].x += dx;
+            wire.pos[j].y += dy;
+        }
+    }
+
+    if(selecting) {
+        selecting.x += dx;
+        selecting.y += dy;
+        contextMenu.x += dx;
+        contextMenu.y += dy;
+    }
+
+    if(undoable) {
+        redoStack = [];
+
+        undoStack.push(() => {
+            moveSelection(components,wires,-dx,-dy,false);
+            redoStack.push(moveSelection.bind(null,...arguments));
+        });
+    }
+}
+
+/*
+ Edits a property of a component/port/wire
+ @param {object} component
+ @param {string} property
+ @param value
+ */
+function edit(object, property, value, undoable = false) {
+    if(object.hasOwnProperty(property)) {
+        const oldValue = object[property];
+        object[property] = value;
+
+        if(undoable) {
+            redoStack = [];
+
+            undoStack.push(() => {
+                object[property] = oldValue;
+
+                redoStack.push(edit.bind(null,...arguments));
+            });
+        }
+    }
 }
 
 /*
@@ -290,6 +793,81 @@ function findWiresInSelection(x,y,w,h) {
 }
 
 /*
+ Finds all wires that are completely inside a selection, and has no connections outside the selection
+ @param {number} x
+ @param {number} y
+ @param {number} w
+ @param {number} h
+ @return {array} wires
+ */
+function findWiresInSelection2(
+    x = selecting.x,
+    y = selecting.y,
+    w = selecting.w,
+    h = selecting.h
+) {
+    const x2 = Math.max(x,x + w);
+    const y2 = Math.max(y,y + h);
+    x = Math.min(x,x + w);
+    y = Math.min(y,y + h);
+
+    const result = [];
+    for(let i = 0; i < wires.length; ++i) {
+        let inSelection = true;
+        const wire = wires[i];
+        const pos = wire.pos;
+        for(let j = 0; j < pos.length; ++j) {
+            if(!(pos[j].x >= x && pos[j].x <= x2 &&
+               pos[j].y >= y && pos[j].y <= y2)) {
+                inSelection = false;
+                break;
+            }
+
+            if(wire.from && wire.from.component &&
+                !(wire.from.component.pos.x + (wire.from.component.width || 0) - .5 > x &&
+                wire.from.component.pos.x - .5 < x2 &&
+                wire.from.component.pos.y + (wire.from.component.height || 0) - .5 > y &&
+                wire.from.component.pos.y - .5 < y2)) {
+                inSelection = false;
+                break;
+            }
+
+            if(wire.to && wire.to.component &&
+                !(wire.to.component.pos.x + (wire.to.component.width || 0) - .5 > x &&
+                wire.to.component.pos.x - .5 < x2 &&
+                wire.to.component.pos.y + (wire.to.component.height || 0) - .5 > y &&
+                wire.to.component.pos.y - .5 < y2)) {
+                inSelection = false;
+                break;
+            }
+        }
+        if(inSelection) result.push(wires[i]);
+    }
+
+    function remove(i) {
+        if(i < 0) return;
+        const wire = result.splice(i,1)[0];
+        for(let i = 0; i < wire.input.length; ++i) {
+            if(!result.includes(wire.input[i])) remove(result.indexOf(wire.input[i]));
+        }
+        for(let i = 0; i < wire.output.length; ++i) {
+            if(!result.includes(wire.output[i])) remove(result.indexOf(wire.output[i]));
+        }
+    }
+
+    for(let i = 0; i < result.length; ++i) {
+        const wire = result[i];
+        for(let i = 0; i < wire.input.length; ++i) {
+            if(!result.includes(wire.input[i])) remove(result.indexOf(wire));
+        }
+        for(let i = 0; i < wire.output.length; ++i) {
+            if(!result.includes(wire.output[i])) remove(result.indexOf(wire));
+        }
+    }
+    return result;
+}
+
+/*
  Creates and returns a clone of a given component
  @param {object} component
  @returns {object} clone
@@ -330,16 +908,15 @@ function cloneComponent(component, dx = 0, dy = 0) {
     } else {
         clone.input = [];
         for(let i = 0; i < component.input.length; ++i) {
-            clone.input.push(Object.assign({},component.input[i]));
-            clone.input[i].component = clone;
-            clone.input[i].pos = Object.assign({},component.input[i].pos);
-            delete clone.input[i].connection;
+            const port = clone.addInputPort();
+            port.name = component.input[i].name;
+            port.pos = Object.assign({},component.input[i].pos);
         }
         clone.output = [];
         for(let i = 0; i < component.output.length; ++i) {
-            clone.output.push(Object.assign({},component.output[i]));
-            clone.output[i].component = clone;
-            delete clone.output[i].connection;
+            const port = clone.addOutputPort();
+            port.name = component.output[i].name;
+            port.pos = Object.assign({},component.output[i].pos);
         }
     }
     return clone;
@@ -443,45 +1020,98 @@ function cloneSelection(components = [], wires = [], dx = 0, dy = 0) {
     }
 }
 
-/*
- Creates one custom component from a selection of components and wires
- @param {array} components_
- @param {array} wires_
- @param {string} [name for the custom component]
- @param {number} [x coordinate to put the custom component]
- @param {number} [y coordinate to put the custom component]
- */
+// /*
+//  Creates one custom component from a selection of components and wires
+//  @param {array} components_
+//  @param {array} wires_
+//  @param {string} [name for the custom component]
+//  @param {number} [x coordinate to put the custom component]
+//  @param {number} [y coordinate to put the custom component]
+//  */
+// function componentize(
+//     components,wires,
+//     name = "Custom",
+//     x = mouse.grid.x, y = mouse.grid.y
+// ) {
+//     // Check if there are connections with components outside the selection
+//     for(let i = 0; i < wires.length; ++i) {
+//         const wire = wires[i];
+//         if(wire.from && !components.includes(wire.from.component)) return;
+//         if(wire.to && !components.includes(wire.to.component)) return;
+//     }
+//
+//     // Remove the components and wires
+//     for(let i = 0; i < components_.length; ++i) {
+//         const index = window.components.indexOf(components[i]);
+//         if(index > -1) window.components.splice(index,1);
+//     }
+//     for(let i = 0; i < wires_.length; ++i) {
+//         const index = window.wires.indexOf(wires[i]);
+//         if(index > -1) window.wires.splice(index,1);
+//     }
+//
+//     const component = new Custom(
+//         name,
+//         { x, y },
+//         components,
+//         wires
+//     );
+//
+//     components.push(component);
+//     dialog.editCustom(component);
+// }
+
 function componentize(
-    components_,wires_,
-    name = "Custom",
-    x = mouse.grid.x, y = mouse.grid.y
+    components,
+    wires,
+    selection = selecting,
+    x = mouse.grid.x,
+    y = mouse.grid.y,
+    undoable = false
 ) {
-    // Check if there are connections with components outside the selection
-    for(let i = 0; i < wires_.length; ++i) {
-        const wire = wires_[i];
-        if(wire.from && !components_.includes(wire.from.component)) return;
-        if(wire.to && !components_.includes(wire.to.component)) return;
-    }
+    const component = new Custom(undefined, { x,y });
 
-    // Remove the components and wires
-    for(let i = 0; i < components_.length; ++i) {
-        const index = components.indexOf(components_[i]);
-        if(index > -1) components.splice(index,1);
-    }
-    for(let i = 0; i < wires_.length; ++i) {
-        const index = wires.indexOf(wires_[i]);
-        if(index > -1) wires.splice(index,1);
-    }
+    const clone = cloneSelection(components,wires);
+    component.components = clone.components;
+    component.wires = clone.wires;
+    component.create();
 
-    const component = new Custom(
-        name,
-        { x, y },
-        components_,
-        wires_
-    );
+    selection = Object.assign({}, selection);
 
-    components.push(component);
-    dialog.editCustom(component);
+    const removed = removeSelection(selecting.components,selecting.wires);
+    window.components.push(component);
+
+    if(undoable) {
+        redoStack = [];
+
+        undoStack.push(() => {
+            removeComponent(component);
+
+            addSelection(
+                removed.components,
+                removed.wires,
+                selection
+            );
+
+            for(let i = 0; i < removed.wires.length; ++i) {
+                const wire = removed.wires[i];
+                connect(wire.from,wire.to,wire);
+                for(let i = 0; i < wire.input.length; ++i) {
+                    connectWires(wire.input[i],wire);
+                }
+
+                for(let i = 0; i < wire.output.length; ++i) {
+                    connectWires(wire,wire.output[i]);
+                }
+            }
+
+            redoStack.push(() => {
+                componentize.call(null,...arguments);
+                selecting = null;
+                contextMenu.hide();
+            });
+        });
+    }
 }
 
 /*
@@ -554,7 +1184,8 @@ class Component {
         }
 
         for(let i = 0; i < wires.length; ++i) {
-            wires[i].update(values[i]);
+            //wires[i].update(values[i]);
+            updateQueue.push(wires[i].update.bind(wires[i],values[i]));
         }
     }
 
@@ -575,8 +1206,12 @@ class Component {
         )) return;
 
         // Draw the frame of the component
+        if(this.outline) {
+            ctx.strokeStyle = "#f55";
+        } else {
+            ctx.strokeStyle = this.strokeColor || "#111";
+        }
         ctx.fillStyle = this.fillColor || "#fff";
-        ctx.strokeStyle = this.strokeColor || "#111";
         ctx.lineWidth = zoom / 12 | 0;
         ctx.beginPath();
         ctx.rect(
@@ -588,9 +1223,10 @@ class Component {
         ctx.fill();
         ctx.stroke();
 
+        ctx.textBaseline = "middle";
+
         // Draw the icon of the component
         if(this.icon) {
-            ctx.textBaseline = "middle";
             ctx.textAlign = "center";
 
             if(this.icon.type == "icon") {
@@ -761,20 +1397,6 @@ class Component {
                 }
             }
         }
-
-        // If the component is highlighted, draw a colored layer over the frame
-        if(this.outline > 0) {
-            ctx.strokeStyle = "#d00";
-            ctx.lineWidth = zoom / 12 | 0;
-            ctx.beginPath();
-            ctx.rect(
-                x - zoom / 2,
-                y - zoom / 2,
-                this.width * zoom,
-                this.height * zoom
-            );
-            ctx.stroke();
-        }
     }
 
     addInputPort(pos,name,properties = {}) {
@@ -861,7 +1483,7 @@ class Input extends Component {
 
     onmousedown() {
         this.value = 1 - this.value;
-        this.update();
+        this.update(true);
     }
 
     function() {
@@ -874,6 +1496,52 @@ class Output extends Component {
         super(name,pos,2,1,{ type: "value" });
         this.addInputPort({ side: 3, pos: 0 });
         this.value = 0;
+    }
+
+    function() {
+        this.value = this.input[0].value;
+    }
+}
+
+class TimerStart extends Component {
+    constructor(name,pos) {
+        super(name,pos,2,1,{ type: "value" });
+        this.addOutputPort({ side: 1, pos: 0 });
+        this.value = 0;
+    }
+
+    onmousedown() {
+        this.value = 1 - this.value;
+        this.update(true);
+    }
+
+    update() {
+        console.time();
+
+        this.function();
+
+        this.output[0].value = this.value;
+        this.output[0].connection && this.output[0].connection.update(this.value);
+    }
+
+    function() {
+        this.output[0].value = this.value;
+    }
+}
+
+class TimerEnd extends Component {
+    constructor(name,pos) {
+        super(name,pos,2,1,{ type: "value" });
+        this.addInputPort({ side: 3, pos: 0 });
+        this.value = 0;
+    }
+
+    update() {
+        console.timeEnd();
+
+        this.function();
+
+        this.input[0].value == 1 && (this.value = 1);
     }
 
     function() {
@@ -1750,11 +2418,17 @@ class Custom extends Component {
     }
 
     open() {
-        const componentsTmp = components;
-        const wiresTmp = wires;
+        const tmp = {
+            components,
+            wires,
+            undoStack,
+            redoStack
+        }
 
         components = this.components;
         wires = this.wires;
+        undoStack = [];
+        redoStack = [];
 
         customComponentToolbar.show(
             this.name,
@@ -1762,8 +2436,10 @@ class Custom extends Component {
                 this.components = components;
                 this.wires = wires;
 
-                components = componentsTmp;
-                wires = wiresTmp;
+                components = tmp.components;
+                wires = tmp.wires;
+                undoStack = tmp.undoStack;
+                redoStack = tmp.redoStack;
 
                 this.create();
             }
@@ -1795,12 +2471,14 @@ class Custom extends Component {
         ctx.fill();
         ctx.stroke();
 
+        ctx.textAlign = "center";
+
         // Draw the name of the component
         ctx.fillStyle = "#888";
         ctx.font = zoom / 3 + "px Ubuntu";
         ctx.fillText(
             this.name,
-            x + ((this.width - 1) / 2 * zoom - ctx.measureText(this.name).width / 2),
+            x + (this.width - 1) / 2 * zoom,
             y + (this.height - 1) / 2 * zoom
         );
 
@@ -1810,7 +2488,7 @@ class Custom extends Component {
         ctx.font = zoom / 7 + "px Ubuntu";
         ctx.fillText(
             description,
-            x + ((this.width - 1) / 2 * zoom - ctx.measureText(description).width / 2),
+            x + (this.width - 1) / 2 * zoom,
             y + (this.height - .5) / 2 * zoom
         );
 
@@ -1874,7 +2552,7 @@ class Custom extends Component {
                     ctx.font = zoom / 7 + "px Ubuntu";
                     ctx.fillText(
                         name,
-                        screen.x - ctx.measureText(name).width / 2,
+                        screen.x,
                         (pos.side == 2 ? screen.y + zoom / 4 : screen.y - zoom / 4)
                     );
                 }
@@ -1939,7 +2617,7 @@ class Custom extends Component {
                     ctx.font = zoom / 7 + "px Ubuntu";
                     ctx.fillText(
                         name,
-                        screen.x - ctx.measureText(name).width / 2,
+                        screen.x,
                         (pos.side == 2 ? screen.y + zoom / 4 : screen.y - zoom / 4)
                     );
                 }
@@ -2140,13 +2818,24 @@ class Wire {
         for(let i = 0; i < this.output.length; ++i) {
             const wire = this.output[i];
             if(wire != from) {
-                setTimeout(() => wire.update(this.value, this));
+                // if(Math.random() < .01) {
+                //     setTimeout(() => { wire.update && wire.update(this.value, this) });
+                // } else {
+                //     wire.update && wire.update(this.value, this);
+                // }
+                wire.update && updateQueue.push(wire.update.bind(wire,this.value,this));
             }
         }
 
         if(this.to && this.to.value != this.value) {
             this.to.value = this.value;
-            setTimeout(() => this.to.component.update());
+
+            // if(Math.random() < .01) {
+            //     setTimeout(() => { this.to.component && this.to.component.update(); });
+            // } else {
+            //     this.to.component && this.to.component.update();
+            // }
+            this.to.component && updateQueue.push(this.to.component.update.bind(this.to.component));
         }
     }
 
@@ -2179,6 +2868,12 @@ class Wire {
 
         for(let i = 0; i < this.intersections.length; ++i) {
             const pos = this.intersections[i];
+
+            if(!pos.type) ctx.fillStyle = "#111";
+            else if(pos.type == 1) ctx.fillStyle = "#11f";
+            else if(pos.type == 2) ctx.fillStyle = "#1f1";
+            else if(pos.type == 3) ctx.fillStyle = "#f11";
+
             ctx.beginPath();
             ctx.arc(
                 (pos.x - offset.x) * zoom,
@@ -2227,6 +2922,7 @@ class CompressedWire extends Wire {
 
         for(let i = 0; i < this.intersections.length; ++i) {
             const pos = this.intersections[i];
+
             ctx.beginPath();
             ctx.arc(
                 (pos.x - offset.x) * zoom,

@@ -247,19 +247,14 @@ createContextMenuOption(
     "memory",
     "Shift+C",
     function() {
-        const component = new Custom();
-        component.pos = {
-            x: Math.round(selecting.x + selecting.w / 2),
-            y: Math.round(selecting.y + selecting.h / 2)
-        }
-
-        const clone = cloneSelection(selecting.components,selecting.wires);
-        component.components = clone.components;
-        component.wires = clone.wires;
-        component.create();
-
-        removeSelection(selecting.components,selecting.wires);
-        components.push(component);
+        componentize(
+            selecting.components,
+            selecting.wires,
+            selecting,
+            Math.round(selecting.x + selecting.w / 2),
+            Math.round(selecting.y + selecting.h / 2),
+            true
+        );
     },
     function() {
         return selecting && selecting.components;
@@ -272,11 +267,7 @@ createContextMenuOption(
     "Delete",
     function() {
         const component = findComponentByPos(...contextMenu.getPos());
-        action(
-            "remove",
-            component,
-            true
-        );
+        removeComponent(component);
     },
     function() {
         const component = findComponentByPos(...contextMenu.getPos());

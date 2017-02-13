@@ -54,6 +54,11 @@ document.getElementById("list").onblur = function() {
     list.hide();
 }
 
+
+
+
+toolbar.onmouseup = () => c.focus();
+
 const listItems = document.getElementById("list").children;
 for(let i = 0; i < listItems.length; ++i) {
     listItems[i].onmouseenter = function() { this.style.background = "#222" };
