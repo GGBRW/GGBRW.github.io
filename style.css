@@ -4,6 +4,32 @@ html, body {
   overflow-x: hidden;
 }
 
+@font-face {
+    font-family: "Material-icons";
+    src: url(../fonts/MaterialIcons-Regular.ttf);
+}
+.material-icons {
+    font-family: "Material-icons";
+    font-style: normal;
+    font-size: 24px;
+}
+
+/* Fonts */
+@font-face {
+    font-family: "Inconsolata";
+    src: url(fonts/Inconsolata-Regular.ttf);
+}
+
+@font-face {
+    font-family: "Ubuntu";
+    src: url(fonts/Ubuntu-Regular.ttf);
+}
+
+@font-face {
+    font-family: "Monospaced";
+    src: url(fonts/Monospace.ttf);
+}
+
 ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
@@ -16,6 +42,12 @@ html, body {
 ::-webkit-scrollbar-thumb {
     background: #ddd;
     border-radius: 5px;
+}
+
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
 header {
@@ -41,12 +73,12 @@ header .logo .material-icons {
   font-size: 34px;
 }
 
-header nav {
+header .nav {
   float: right;
   margin: 12px 50px 0;
 }
 
-header nav a {
+header .nav a {
   font-family: "Ubuntu";
   font-size: 15px;
   color: #ddd;
@@ -54,13 +86,66 @@ header nav a {
   padding: 24px;
 }
 
-header nav .social {
+header .nav .social {
   float: right;
 }
 
-header nav .social .github {
+header .nav .social .github {
   background: url("img/github.png") no-repeat center;
   cursor: pointer;
+}
+
+header .hamburger {
+  display: none;
+  color: #ddd;
+  font-size: 34px;
+  float: right;
+  margin: 5px 50px 0;
+  cursor: pointer;
+}
+
+header .float {
+  position: fixed;
+  top: 100px;
+  right: 10px;
+  width: 160px;
+  background: #111;
+  box-shadow: 0 0 20px rgba(0,0,0,.25);
+  border-radius: 5px;
+  text-align: center;
+  z-index: 2;
+
+  display: none;
+  opacity: 0;
+  transform: translateY(-50px);
+  transition: opacity .2s, transform .2s;
+}
+
+header .float:before {
+    content: '';
+    position: relative;
+    border-style: solid;
+    border-width: 0 15px 15px;
+    border-color: #111 transparent;
+    display: block;
+    width: 0;
+    z-index: 3;
+    top: -15px;
+    left: 75%;
+    margin-left: -15px;
+}
+
+header .float a {
+  display: block;
+  font-family: "Ubuntu";
+  font-size: 15;
+  color: #ddd;
+  padding: 10px;
+  text-decoration: none;
+}
+
+header .float a:hover {
+  background: rgba(255,255,255,.1);
 }
 
 .jumbotron {
@@ -69,6 +154,9 @@ header nav .social .github {
   margin-top: 120px;
   text-align: center;
   padding-bottom: 100px;
+
+  opacity: 0;
+  transition: opacity 2s;
 }
 
 .jumbotron h1 {
@@ -77,6 +165,12 @@ header nav .social .github {
   font-weight: 400;
   color: #ddd;
   margin: 20px;
+}
+
+@media only screen and (max-width: 600px) {
+  .jumbotron h1 {
+    font-size: 25vw;
+  }
 }
 
 .downloads {
@@ -135,7 +229,7 @@ section h1 {
 }
 
 .about {
-  margin-top: 45%;
+  margin-top: 90vh;
   box-shadow: 20px 0 20px rgba(0,0,0,.5);
 }
 
@@ -195,4 +289,14 @@ section h1 {
   font-family: "Ubuntu";
   color: #888;
   text-align: center;
+}
+
+.invisible-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 2;
 }

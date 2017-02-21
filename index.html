@@ -2,6 +2,8 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>BOOLR</title>
 
     <link rel="stylesheet" href="style.css">
@@ -11,19 +13,82 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
   <body>
+    <canvas class="background"></canvas>
+    <script src="js/components2.js"></script>
+    <script src="js/background.js"></script>
+
+    <div class="invisible-overlay"></div>
+
     <header class="header">
       <span class="logo">
         <i class="material-icons">memory</i>
         BOOLR
       </span>
-      <nav>
+      <nav class="nav">
         <a href="#">About</a>
         <a href="#">Downloads</a>
+        <a href="#">Boards</a>
         <a href="#">Contact</a>
         <span class="social">
           <a class="github" href="https://github.com/GGBRW/BOOLR"></a>
         </span>
       </nav>
+      <span class="hamburger material-icons">menu</span>
+
+      <script>
+        const hamburger = document.querySelector(".hamburger");
+        hamburger.onclick = () => float.show();
+
+        const nav = document.querySelector(".nav");
+
+        window.onresize = () => {
+          if(innerWidth < 1000) {
+            hamburger.style.display = "block";
+            nav.style.display = "none";
+          } else {
+            hamburger.style.display = "none";
+            nav.style.display = "block";
+          }
+
+          draw();
+        }
+
+        window.onresize();
+      </script>
+
+      <nav class="float">
+        <a href="#">About</a>
+        <a href="#">Downloads</a>
+        <a href="#">Boards</a>
+        <a href="#">Contact</a>
+        <span class="social">
+          <a class="github" href="https://github.com/GGBRW/BOOLR"></a>
+        </span>
+      </nav>
+
+      <script>
+        const float = document.querySelector(".float");
+        const overlay = document.querySelector(".invisible-overlay");
+        overlay.onclick = () => float.hide();
+
+        float.show = function() {
+          this.style.display = "block";
+          overlay.style.display = "block";
+          setTimeout(() => {
+            this.style.opacity = 1;
+            this.style.transform = "translateY(0px)";
+          },10);
+        }
+
+        float.hide = function() {
+          this.style.opacity = 0;
+          this.style.transform = "translateY(-50px)";
+          setTimeout(() => {
+            this.style.display = "none";
+            overlay.style.display = "none";
+          }, 200);
+        }
+      </script>
     </header>
 
     <div class="jumbotron">
@@ -44,8 +109,12 @@
         </div>
     </div>
     <script>
-      // A scaling animation
       const jumbotron = document.querySelector(".jumbotron");
+
+      // Fade in animation
+      window.onload = () => jumbotron.style.opacity = 1;
+
+      // A scaling animation
       (function animate() {
         jumbotron.style.transform = "scale(" + (1 - document.body.scrollTop / 8000) + ")";
         requestAnimationFrame(animate);
