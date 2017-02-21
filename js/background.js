@@ -39,5 +39,3 @@ function draw() {
     components[i].draw();
   }
 }
-
-draw();

@@ -110,7 +110,10 @@
       const jumbotron = document.querySelector(".jumbotron");
 
       // Fade in animation
-      window.onload = () => jumbotron.style.opacity = 1;
+      window.onload = () => {
+        jumbotron.style.opacity = 1;
+        draw();
+      }
 
       // A scaling animation
       (function animate() {
