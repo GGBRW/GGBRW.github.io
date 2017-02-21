@@ -100,7 +100,7 @@ header .hamburger {
   color: #ddd;
   font-size: 34px;
   float: right;
-  margin: 5px 50px 0;
+  padding: 5px 50px 0;
   cursor: pointer;
 }
 
