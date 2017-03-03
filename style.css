@@ -173,14 +173,10 @@ header .float a:hover {
   }
 }
 
-.downloads {
-  text-align: center;
-}
-
-.downloads button {
+.downloadbtn {
   position: relative;
   top: 0;
-  background: #888;
+  background: #ddd;
   box-shadow: 0 5px 0 0 #555;
   border: none;
   border-radius: 5px;
@@ -192,24 +188,24 @@ header .float a:hover {
   outline: none;
 }
 
-.downloads button:hover {
+.downloadbtn:hover {
   background: #ddd;
   box-shadow: 0 5px 0 0 #888;
 }
 
-.downloads button:active {
+.downloadbtn:active {
   top: 5px;
   box-shadow: 0 0 0 0;
 }
 
-.downloads a {
+.downloadlink {
   color: #888;
   font-family: "Ubuntu";
   font-size: 15px;
   cursor: pointer;
 }
 
-.downloads a:hover {
+.downloadlink:hover {
   color: #ddd;
   text-decoration: underline;
 }
@@ -267,8 +263,25 @@ section h1 {
   transform: scale(1.25);
 }
 
-.version {
+.downloads {
   background: #ccc;
+  font-size: 15px;
+}
+
+.downloads button {
+  margin: 10px;
+  background: #111;
+  border: none;
+  border-radius: 5px;
+  color: #ddd;
+  font-family: "Ubuntu", Arial;
+  font-size: 16px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.downloads button:hover {
+  background: #333;
 }
 
 .version ul {
@@ -280,6 +293,10 @@ section h1 {
 
 .version ul li {
   padding: 5px;
+}
+
+.boards {
+  background: #ccc;
 }
 
 .footer {
