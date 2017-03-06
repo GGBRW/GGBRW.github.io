@@ -233,7 +233,7 @@ section h1 {
   float: left;
   width: 50%;
   text-align: left;
-  line-height: 20px;
+  line-height: 30px;
 }
 
 .about .video {
@@ -245,7 +245,7 @@ section h1 {
   width: 500px;
   font-family: "Ubuntu";
   line-height: 300px;
-  margin-top: 50px;
+  margin: 0 200px;
   cursor: pointer;
 }
 
