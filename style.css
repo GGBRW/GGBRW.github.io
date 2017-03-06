@@ -151,7 +151,7 @@ header .float a:hover {
 .jumbotron {
   position: fixed;
   width: 100%;
-  margin-top: 120px;
+  margin-top: 50px;
   text-align: center;
   padding-bottom: 100px;
 
@@ -164,7 +164,7 @@ header .float a:hover {
   font-size: 160px;
   font-weight: 400;
   color: #ddd;
-  margin: 20px;
+  margin: 80px;
 }
 
 @media only screen and (max-width: 600px) {
@@ -176,11 +176,13 @@ header .float a:hover {
 .downloadbtn {
   position: relative;
   top: 0;
-  background: #ddd;
+  background: #888;
+  color: #111;
+  text-decoration: none;
   box-shadow: 0 5px 0 0 #555;
   border: none;
   border-radius: 5px;
-  padding: 20px 30px;
+  padding: 30px;
   font-family: "Ubuntu";
   font-size: 20px;
   transition: top .2s, background .2s, box-shadow .2s;
@@ -196,18 +198,6 @@ header .float a:hover {
 .downloadbtn:active {
   top: 5px;
   box-shadow: 0 0 0 0;
-}
-
-.downloadlink {
-  color: #888;
-  font-family: "Ubuntu";
-  font-size: 15px;
-  cursor: pointer;
-}
-
-.downloadlink:hover {
-  color: #ddd;
-  text-decoration: underline;
 }
 
 section {
@@ -229,13 +219,6 @@ section h1 {
   box-shadow: 20px 0 20px rgba(0,0,0,.5);
 }
 
-.about .intro {
-  float: left;
-  width: 50%;
-  text-align: left;
-  line-height: 30px;
-}
-
 .about .video {
   background: url("img/thumbnail.png");
   background-size: 100%;
@@ -245,7 +228,7 @@ section h1 {
   width: 500px;
   font-family: "Ubuntu";
   line-height: 300px;
-  margin: 0 200px;
+  margin: 0 100px;
   cursor: pointer;
 }
 
@@ -284,6 +267,10 @@ section h1 {
   background: #333;
 }
 
+.version {
+  background: #ccc;
+}
+
 .version ul {
   width: 200px;
   margin: 0 auto;
@@ -293,10 +280,6 @@ section h1 {
 
 .version ul li {
   padding: 5px;
-}
-
-.boards {
-  background: #ccc;
 }
 
 .footer {
