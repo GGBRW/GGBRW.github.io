@@ -54,8 +54,15 @@ header {
   padding: 16px;
   position: fixed;
   top: 0;
-  z-index: 1;
+  z-index: 3;
   width: 100%;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 
   transition: background .2s;
 }
@@ -83,6 +90,7 @@ header .nav a {
   color: #ddd;
   text-decoration: none;
   padding: 24px;
+  cursor: pointer;
 }
 
 header .nav .social {
@@ -112,7 +120,7 @@ header .float {
   box-shadow: 0 0 20px rgba(0,0,0,.25);
   border-radius: 5px;
   text-align: center;
-  z-index: 2;
+  z-index: 4;
 
   display: none;
   opacity: 0;
@@ -154,8 +162,12 @@ header .float a:hover {
   text-align: center;
   padding-bottom: 100px;
 
-  opacity: 0;
-  transition: opacity 2s;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .jumbotron h1 {
@@ -175,47 +187,43 @@ header .float a:hover {
 @media only screen and (max-width: 600px) {
   .jumbotron h1 {
     font-size: 25vw;
-    margin: 100px 0;
-  }
-
-  .about .video iframe {
-    width: 10px;
+    margin: 100px 0 0 0;
   }
 }
 
 .downloadbtn {
   position: relative;
-  top: 200px;
-  background: #888;
+  top: 20vh;
+  background: #aaa;
   color: #111;
   text-decoration: none;
-  border: none;
+  box-shadow: inset 0 0 0 5px #888;
   border-radius: 2px;
   padding: 40px;
   font-family: "Ubuntu";
   font-size: 20px;
-  transition: top .2s, background .2s, box-shadow .2s;
+  transition: background .2s;
   cursor: pointer;
   outline: none;
   image-rendering: auto;
 }
 
 .downloadbtn:hover {
-  background: #ddd;
+  background: #888;
 }
 
 .downloadbtn .inputport {
   position: absolute;
-  height: 20px;
+  height: 25px;
   top: 40%;
-  right: -48px;
+  right: -59px;
 }
 
 .downloadbtn .outputport {
   position: absolute;
-  height: 20px;
+  height: 25px;
   top: 40%;
-  left: -48px;
+  left: -59px;
 }
 
 section {
@@ -241,8 +249,14 @@ section h1 {
   width: 500px;
   line-height: 25px;
   text-align: left;
-  margin: 30px;
+  margin: 30px 0;
   display: inline-block;
+}
+
+@media only screen and (max-width: 600px) {
+  .about .info {
+    width: 100%;
+  }
 }
 
 .about .video {
@@ -258,6 +272,12 @@ section h1 {
 .about .video iframe {
   height: 100%;
   width: 100%;
+}
+
+@media only screen and (max-width: 600px) {
+  .about .video {
+    width: 100%;
+  }
 }
 
 .gallery {
@@ -303,6 +323,12 @@ section h1 {
   transition: transform .2s;
 }
 
+@media only screen and (max-width: 600px) {
+  .gallery .close {
+    margin: 20px;
+  }
+}
+
 .gallery .close:hover {
   transform: rotateZ(90deg);
 }
@@ -329,7 +355,6 @@ section h1 {
 }
 
 .version ul {
-  width: 500px;
   margin: 0 auto;
   text-align: left;
   font-size: 18px;
@@ -346,7 +371,7 @@ section h1 {
   background: #ccc;
 }
 
-.boards button {
+.boards a {
   display: block;
   margin: 20px auto;
   padding: 20px;
@@ -356,13 +381,17 @@ section h1 {
   background: #ddd;
   border: none;
   border-radius: 5px;
+  cursor: pointer;
+  transition: background .2s;
+  color: #111;
+  text-decoration: none;
 }
 
-.boards button:hover {
+.boards a:hover {
   background: #bbb;
 }
 
-.boards button .material-icons {
+.boards a .material-icons {
   float: left;
   color: #555;
 }

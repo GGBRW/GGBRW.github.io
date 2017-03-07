@@ -23,19 +23,27 @@
         BOOLR
       </span>
       <nav class="nav">
-        <a href="#">About</a>
         <a href="https://github.com/ggbrw/boolr/releases">Download</a>
-        <a href="#">Boards</a>
-        <a href="#">Contact</a>
+        <a onclick="scrollToSection('about')">About</a>
+        <a onclick="scrollToSection('gallery')">Screenshots</a>
+        <a onclick="scrollToSection('version')">Version history</a>
+        <a onclick="scrollToSection('boards')">Download boards</a>
         <span class="social">
           <a class="github" href="https://github.com/GGBRW/BOOLR"></a>
         </span>
+
+        <script>
+          function scrollToSection(section) {
+            const el = document.querySelector("." + section);
+            el && (document.body.scrollTop = el.offsetTop - 100);
+          }
+        </script>
       </nav>
       <span class="hamburger material-icons">menu</span>
 
       <script>
         const hamburger = document.querySelector(".hamburger");
-        hamburger.onclick = () => float.show();
+        hamburger.onclick = () => float.toggle();
 
         const nav = document.querySelector(".nav");
 
@@ -53,10 +61,11 @@
       </script>
 
       <nav class="float">
-        <a href="#">About</a>
         <a href="https://github.com/ggbrw/boolr/releases">Download</a>
-        <a href="#">Boards</a>
-        <a href="#">Contact</a>
+        <a onclick="scrollToSection('about')">About</a>
+        <a onclick="scrollToSection('gallery')">Screenshots</a>
+        <a onclick="scrollToSection('version')">Version history</a>
+        <a onclick="scrollToSection('boards')">Download boards</a>
         <span class="social">
           <a class="github" href="https://github.com/GGBRW/BOOLR"></a>
         </span>
@@ -84,6 +93,11 @@
             overlay.style.display = "none";
           }, 200);
         }
+
+        float.toggle = function() {
+          if(this.style.display != "block") this.show();
+          else this.hide();
+        }
       </script>
     </header>
 
@@ -100,19 +114,15 @@
     <script>
       const jumbotron = document.querySelector(".jumbotron");
 
-      // Fade in animation
-      window.onload = () => {
-        jumbotron.style.opacity = 1;
-      }
-
       // A scaling animation
       (function animate() {
         jumbotron.style.transform = "scale(" + (1 - document.body.scrollTop / 8000) + ")";
+        jumbotron.style.opacity = 1 - document.body.scrollTop / 1000;
         requestAnimationFrame(animate);
       })();
     </script>
 
-    <section class="about">
+    <section id="about" class="about">
       <div class="scrolldown material-icons" style="position: relative; font-size: 80px;">keyboard_arrow_down</div>
       <script>
         // Floating scrolldown arrow animation
@@ -128,7 +138,7 @@
 
       <h1>A digital logic simulator</h1>
       <div class="info">
-        BOOLR is a digital logic simulator. We are three Dutch high school students in our final year and we are doing a project about Digital Logic.
+        In case you haven't already noticed, BOOLR is a digital logic simulator. We are three Dutch high school students in our final year and we are doing a project about Digital Logic.
         To make our own digital logic circuits we have built BOOLR, which we have created with JavaScript and lots of love.
         BOOLR works with Windows, Mac OS and Linux and it is completely free.
 
@@ -145,7 +155,7 @@
       <div style="clear: both;"></div>
     </section>
 
-    <section class="gallery">
+    <section id="screenshots" class="gallery">
       <h1>Screenshots</h1>
       <img src="img/gallery/0.png">
       <img src="img/gallery/1.png">
@@ -197,8 +207,8 @@
       </script>
     </section>
 
-    <section class="version">
-        <h1>Versions</h1>
+    <section id="version" class="version">
+        <h1>Version history</h1>
 
         <h3>v1.0.3</h3>
         <ul>
@@ -215,7 +225,7 @@
         </ul>
         <br>
 
-        <h3>Future features</h3>
+        <h3>Possibly in future versions</h3>
         <ul>
           <li>Multi-threading</li>
           <li>Open .board files from explorer</li>
@@ -223,11 +233,11 @@
         </ul>
     </section>
 
-    <section class="boards">
+    <section id="boards" class="boards">
       <h1>Download boards</h1>
-      <button><i class="material-icons">file_download</i>Download adder.board</button>
-      <button><i class="material-icons">file_download</i>Download register.board</button>
-      <button><i class="material-icons">file_download</i>Download Tineke.board</button>
+      <a href="data:text/plain,test" download="test.txt"><i class="material-icons">file_download</i>Download adder.board</a>
+      <a href="data:text/plain,test" download="test.txt"><i class="material-icons">file_download</i>Download register.board</a>
+      <a href="data:text/plain,test" download="test.txt"><i class="material-icons">file_download</i>Download Tineke.board</a>
     </section>
 
     <footer class="footer">
@@ -235,5 +245,15 @@
           Copyright &copy; Jaap Dechering, Gees Brouwer, Teun de Theije, 2017
         </span>
     </footer>
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63707482-3', 'auto');
+      ga('send', 'pageview');
+    </script>
   </body>
 </html>
