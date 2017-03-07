@@ -75,6 +75,7 @@
         const float = document.querySelector(".float");
         const overlay = document.querySelector(".invisible-overlay");
         overlay.onclick = () => float.hide();
+        float.onclick = () => float.hide();
 
         float.show = function() {
           this.style.display = "block";
