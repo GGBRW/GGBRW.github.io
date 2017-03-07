@@ -180,6 +180,7 @@ header .float a:hover {
 }
 
 .jumbotron h2 {
+  font-family: "Ubuntu";
   font-weight: 400;
   color: #888;
   margin: 0;
