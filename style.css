@@ -2,6 +2,11 @@ html, body {
   background: #111;
   margin: 0;
   overflow-x: hidden;
+
+  background-image: url("img/background.png");
+  background-size: 100px;
+  background-attachment: fixed;
+  image-rendering: pixelated;
 }
 
 @font-face {
@@ -42,12 +47,6 @@ html, body {
 ::-webkit-scrollbar-thumb {
     background: #ddd;
     border-radius: 5px;
-}
-
-.background {
-  position: fixed;
-  top: 0;
-  left: 0;
 }
 
 header {
@@ -164,40 +163,59 @@ header .float a:hover {
   font-size: 160px;
   font-weight: 400;
   color: #ddd;
-  margin: 80px;
+  margin: 80px 0 0 0;
+}
+
+.jumbotron h2 {
+  font-weight: 400;
+  color: #888;
+  margin: 0;
 }
 
 @media only screen and (max-width: 600px) {
   .jumbotron h1 {
     font-size: 25vw;
+    margin: 100px 0;
+  }
+
+  .about .video iframe {
+    width: 10px;
   }
 }
 
 .downloadbtn {
   position: relative;
-  top: 0;
+  top: 200px;
   background: #888;
   color: #111;
   text-decoration: none;
-  box-shadow: 0 5px 0 0 #555;
   border: none;
-  border-radius: 5px;
-  padding: 30px;
+  border-radius: 2px;
+  padding: 40px;
   font-family: "Ubuntu";
   font-size: 20px;
   transition: top .2s, background .2s, box-shadow .2s;
   cursor: pointer;
   outline: none;
+  image-rendering: auto;
 }
 
 .downloadbtn:hover {
   background: #ddd;
-  box-shadow: 0 5px 0 0 #888;
 }
 
-.downloadbtn:active {
-  top: 5px;
-  box-shadow: 0 0 0 0;
+.downloadbtn .inputport {
+  position: absolute;
+  height: 20px;
+  top: 40%;
+  right: -48px;
+}
+
+.downloadbtn .outputport {
+  position: absolute;
+  height: 20px;
+  top: 40%;
+  left: -48px;
 }
 
 section {
@@ -237,18 +255,56 @@ section h1 {
   display: inline-block;
 }
 
-.about .video .play {
-  position: relative;
-  top: 20px;
-  font-size: 70px;
-  color: #ddd;
+.about .video iframe {
+  height: 100%;
+  width: 100%;
+}
 
+.gallery {
+  background: #ccc;
+  image-rendering: auto;
+}
+
+.gallery img {
+  width: 300px;
+  margin: 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,.25);
   transform: scale(1);
+  -transition: opacity .2s, transform .5s;
+  cursor: pointer;
+}
+
+.gallery img:not(.fullscreen):hover {
+  opacity: .5;
+}
+
+.gallery .fullscreen {
+  position: fixed;
+  top: 100px;
+  left: 0;
+  z-index: 9;
+  margin: 0;
+}
+
+.gallery .close {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 6;
+  margin: 50px;
+  background: transparent;
+  border: none;
+  font-size: 50px;
+  color: #fff;
+  cursor: pointer;
+  outline: none;
+
   transition: transform .2s;
 }
 
-.about .video:hover > .play {
-  transform: scale(1.25);
+.gallery .close:hover {
+  transform: rotateZ(90deg);
 }
 
 .downloads {
@@ -272,19 +328,43 @@ section h1 {
   background: #333;
 }
 
-.version {
-  background: #ccc;
-}
-
 .version ul {
-  width: 200px;
+  width: 500px;
   margin: 0 auto;
   text-align: left;
   font-size: 18px;
+  padding: 0;
+  list-style: none;
 }
 
 .version ul li {
   padding: 5px;
+  text-align: center;
+}
+
+.boards {
+  background: #ccc;
+}
+
+.boards button {
+  display: block;
+  margin: 20px auto;
+  padding: 20px;
+  width: 250px;
+  font-family: "Ubuntu";
+  font-size: 15px;
+  background: #ddd;
+  border: none;
+  border-radius: 5px;
+}
+
+.boards button:hover {
+  background: #bbb;
+}
+
+.boards button .material-icons {
+  float: left;
+  color: #555;
 }
 
 .footer {
@@ -295,6 +375,17 @@ section h1 {
   font-family: "Ubuntu";
   color: #888;
   text-align: center;
+}
+
+.visible-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 2;
+  background: rgba(0,0,0,.75);
 }
 
 .invisible-overlay {
