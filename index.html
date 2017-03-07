@@ -173,6 +173,7 @@
         const img = gallery.querySelectorAll("img");
         const close = gallery.querySelector(".close");
         const visibleOverlay = document.querySelector(".visible-overlay");
+        visibleOverlay.onclick = hideImg;
 
         for(let i of img) i.onclick = showImg;
 

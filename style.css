@@ -71,7 +71,7 @@ header .logo {
   font-family: "Righteous";
   font-size: 34px;
   color: #ddd;
-  cursor: pointer;
+  cursor: p
 }
 
 header .logo .material-icons {
@@ -325,6 +325,10 @@ section h1 {
 }
 
 @media only screen and (max-width: 600px) {
+  .gallery img {
+    margin: 0;
+    width: 100%;
+  }
   .gallery .close {
     margin: 20px;
   }
