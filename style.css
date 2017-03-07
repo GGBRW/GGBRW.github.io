@@ -71,6 +71,7 @@ header .logo {
   font-family: "Righteous";
   font-size: 34px;
   color: #ddd;
+  cursor: pointer;
 }
 
 header .logo .material-icons {
