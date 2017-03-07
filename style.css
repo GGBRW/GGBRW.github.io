@@ -6,7 +6,11 @@ html, body {
   background-image: url("img/background.png");
   background-size: 100px;
   background-attachment: fixed;
+  image-rendering: -moz-pixelated;
+  image-rendering:   -o-pixelated;
+  image-rendering: -webkit-pixelated;
   image-rendering: pixelated;
+  -ms-interpolation-mode: nearest-neighbor;
 }
 
 @font-face {
@@ -207,7 +211,11 @@ header .float a:hover {
   transition: background .2s;
   cursor: pointer;
   outline: none;
+  image-rendering: -moz-auto;
+  image-rendering:   -o-auto;
+  image-rendering: -webkit-auto;
   image-rendering: auto;
+  -ms-interpolation-mode: nearest-neighbor;
 }
 
 .downloadbtn:hover {
@@ -255,6 +263,10 @@ section h1 {
   display: inline-block;
 }
 
+.about .info a {
+  color: #888;
+}
+
 @media only screen and (max-width: 600px) {
   .about .info {
     width: 100%;
@@ -284,7 +296,11 @@ section h1 {
 
 .gallery {
   background: #ccc;
+  image-rendering: -moz-auto;
+  image-rendering:   -o-auto;
+  image-rendering: -webkit-auto;
   image-rendering: auto;
+  -ms-interpolation-mode: nearest-neighbor;
 }
 
 .gallery img {
@@ -331,7 +347,7 @@ section h1 {
     width: 100%;
   }
   .gallery .close {
-    margin: 20px;
+    margin-right: 20px;
   }
 }
 
