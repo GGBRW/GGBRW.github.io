@@ -228,14 +228,14 @@ header .float a:hover {
   position: absolute;
   height: 25px;
   top: 40%;
-  right: -59px;
+  left: 100%;
 }
 
 .downloadbtn .outputport {
   position: absolute;
   height: 25px;
   top: 40%;
-  left: -59px;
+  right: 100%;
 }
 
 section {
