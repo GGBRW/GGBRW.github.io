@@ -144,9 +144,10 @@
         BOOLR works with Windows, Mac OS and Linux and it is completely free.
 
         <h2>Technical info</h2>
-        BOOLR is created with JavaScript, HTML, CSS and runs in Electron.
+        BOOLR is created with JavaScript, HTML5, CSS3 and runs in Electron.
         The simulation and rendering are running (yet) on the same thread.
-        The simulation runs asynchronously and in ticks, so large simulations won't freeze your screen.
+        The simulation runs asynchronously and in ticks, so complex simulations won't freeze your screen.
+        BOOLR is an open source project, its code is published on <a href="https://github.com/ggbrw/boolr">https://github.com/ggbrw/boolr</a>
       </div>
 
       <div class="video">
@@ -199,7 +200,7 @@
           for(let i of img) {
             i.className = "";
             i.style.height = "auto";
-            i.style.width = "300px";
+            i.style.width = innerWidth < 600 ? "100%" : "300px";
           }
           close.style.display = "none";
           visibleOverlay.style.display = "none";
