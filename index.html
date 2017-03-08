@@ -18,7 +18,7 @@
     <div class="invisible-overlay"></div>
 
     <header class="header">
-      <span class="logo" onclick="document.body.scrollTop = 0">
+      <span class="logo" onclick="scrollTo(0,0)">
         <i class="material-icons">memory</i>
         BOOLR
       </span>
@@ -35,7 +35,7 @@
         <script>
           function scrollToSection(section) {
             const el = document.querySelector("." + section);
-            el && (document.body.scrollTop = el.offsetTop - 100);
+            el && (scrollTo(0,el.offsetTop - 100));
           }
         </script>
       </nav>
