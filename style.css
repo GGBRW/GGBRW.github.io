@@ -420,6 +420,27 @@ section h1 {
   color: #555;
 }
 
+.boards .video {
+  box-shadow: 0 0 20px rgba(0,0,0,.25);
+  height: 281px;
+  width: 500px;
+  font-family: "Ubuntu";
+  line-height: 300px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.boards iframe {
+  height: 100%;
+  width: 100%;
+}
+
+@media only screen and (max-width: 600px) {
+  .boards .video {
+    width: 100%;
+  }
+}
+
 .footer {
   position: relative;
   background: #111;
