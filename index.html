@@ -110,6 +110,7 @@
           Download BOOLR v1.0.3
           <img class="inputport" src="img/port_input.png">
           <img class="outputport" src="img/port_output.png">
+          <span class="platforms">For Windows, Mac OS and Linux</span>
         </a>
     </div>
     <script>
@@ -137,9 +138,10 @@
         })();
       </script>
 
-      <h1>A digital logic simulator</h1>
+      <br>
       <div class="info">
-        In case you haven't already noticed, BOOLR is a digital logic simulator. We are three Dutch high school students in our final year and we are doing a project about Digital Logic.
+        BOOLR is a digital logic simulator.
+        We are three Dutch high school students in our final year and we are doing a project about digital logic.
         To make our own digital logic circuits we have built BOOLR, which we have created with JavaScript and lots of love.
         BOOLR works with Windows, Mac OS and Linux and it is completely free.
 
@@ -239,19 +241,31 @@
 
     <section id="boards" class="boards">
       <h1>Download boards</h1>
-      Demos:
+      <h2>Demos</h2>
       <a href="boards/adder.board" download><i class="material-icons">file_download</i>Download adder.board</a>
       <a href="boards/register.board" download><i class="material-icons">file_download</i>Download register.board</a>
       <br>
-      For our school project, we have created an 8-bits computer with BOOLR called Tineke. To see her, download tineke.board below.
-      <a href="boards/tineke.zip" download><i class="material-icons">file_download</i>Download tineke.board</a>
-      Before building Tineke, we have built Gerda for practising purposes. Gerda is basically a minimalised version of Tineke.
+
+      <h2>Our school project</h2>
+      For our school project, we have created a computer.
+      After a lot of studying and research we have designed and 8-bits computer
+      that could run simple programs with a maximum 64 instructions.
+      We gave it the name Tineke, a Dutch female name.
       <br>
-      In the download below she is programmed to find prime numbers.
-      <a href="boards/gerda.board" download><i class="material-icons">file_download</i>Download gerda.board</a>
+      Before building her, we have built a minimalised version of Tineke, called Gerda, for testing purposes.
+      She is programmed to find prime numbers. This takes a long time, because our simulator is not (yet) fast enough to
+      handle a higher clock speed. In our final computer Tineke we managed to upgrade the clock speed.
       <div class="video">
         <iframe width="560" height="315" src="https://www.youtube.com/embed/PlRRY20QS6o" frameborder="0" allowfullscreen></iframe>
       </div>
+      <a href="boards/gerda-primes.board" download><i class="material-icons">file_download</i>Download gerda-primes.board</a>
+
+      After a year of hard work we have finished Tineke. She has 640 bytes of RAM, a 17 Hz processor and
+      she is fully programmable.
+      The .zip file below contains the .board file of Tineke, the .board file of Tineke programmed to output prime numbers,
+      and a few schematics for programming Tineke.
+      <a href="boards/tineke.zip" download><i class="material-icons">file_download</i>Download tineke.board</a>
+      <br>
     </section>
 
     <footer class="footer">
