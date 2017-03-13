@@ -445,6 +445,7 @@ section h1 {
   transform: scale(1);
   -transition: opacity .2s, transform .5s;
   cursor: pointer;
+  image-rendering: auto;
 }
 
 .boards img:not(.fullscreen):hover {
