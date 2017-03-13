@@ -170,45 +170,49 @@
       <img src="img/gallery/6.png">
       <img src="img/gallery/7.png">
 
-      <button class="close material-icons" onclick="hideImg()">close</button>
+      <button class="close material-icons">close</button>
 
       <script>
-        const gallery = document.querySelector(".gallery");
-        const img = gallery.querySelectorAll("img");
-        const close = gallery.querySelector(".close");
-        const visibleOverlay = document.querySelector(".visible-overlay");
-        visibleOverlay.onclick = hideImg;
+        (function() {
+          const gallery = document.querySelector(".gallery");
+          const img = gallery.querySelectorAll("img");
+          const close = gallery.querySelector(".close");
+          const visibleOverlay = document.querySelector(".visible-overlay");
 
-        for(let i of img) i.onclick = showImg;
+          for(let i of img) i.onclick = showImg;
 
-        function showImg() {
-          this.className = "fullscreen";
+          function showImg() {
+            this.className = "fullscreen";
 
-          const ratio = this.clientHeight / this.clientWidth;
-          if((innerHeight - 200) / ratio < innerWidth) {
-            this.style.height = (innerHeight - 200) + "px";
-            this.style.width = (innerHeight - 200) / ratio + "px";
-            this.style.left = (innerWidth - (innerHeight - 200) / ratio) / 2 + "px";
-          } else {
-            this.style.height = "auto";
-            this.style.width = "100%";
-            this.style.top = (innerHeight - (innerWidth * ratio)) / 2 + "px";
+            const ratio = this.clientHeight / this.clientWidth;
+            if((innerHeight - 200) / ratio < innerWidth) {
+              this.style.height = (innerHeight - 200) + "px";
+              this.style.width = (innerHeight - 200) / ratio + "px";
+              this.style.left = (innerWidth - (innerHeight - 200) / ratio) / 2 + "px";
+            } else {
+              this.style.height = "auto";
+              this.style.width = "100%";
+              this.style.top = (innerHeight - (innerWidth * ratio)) / 2 + "px";
+            }
+            close.style.display = "block";
+            visibleOverlay.style.display = "block";
+
+            close.onclick = hideImg;
+            visibleOverlay.onclick = hideImg;
+            document.onkeydown = hideImg;
           }
-          close.style.display = "block";
-          visibleOverlay.style.display = "block";
-        }
 
-        function hideImg() {
-          for(let i of img) {
-            i.className = "";
-            i.style.height = "auto";
-            i.style.width = innerWidth < 600 ? "100%" : "300px";
+          const hideImg = () => {
+            console.log(img);
+            for(let i of img) {
+              i.className = "";
+              i.style.height = "auto";
+              i.style.width = innerWidth < 600 ? "100%" : "300px";
+            }
+            close.style.display = "none";
+            visibleOverlay.style.display = "none";
           }
-          close.style.display = "none";
-          visibleOverlay.style.display = "none";
-        }
-
-        document.onkeydown = hideImg;
+        })();
       </script>
     </section>
 
@@ -247,29 +251,76 @@
       <a href="boards/register.board" download><i class="material-icons">file_download</i>Download register.board</a>
       <br>
 
-      <h2>Our school project</h2>
-      For our school project, we have created a computer.
-      After a lot of studying and research we have designed an 8-bits computer
-      that could run simple programs with a maximum of 64 instructions.
-      We gave it the name Tineke, a Dutch female name.
-      <br>
-      Before building her, we have built a minimalised version of Tineke, called Gerda, for testing purposes.
-      She is programmed to find prime numbers. This takes a long time, because our simulator is not (yet) fast enough to
-      handle a higher clock speed. In our final computer Tineke we managed to upgrade the clock speed.
-      <br>
-      <div class="video">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/PlRRY20QS6o" frameborder="0" allowfullscreen></iframe>
-      </div>
-      <a href="boards/gerda-primes.board" download><i class="material-icons">file_download</i>Download gerda-primes.board</a>
+      <div class="school">
+        <h2>Our school project</h2>
+        For our school project, we have created a computer.
+        After a lot of studying and research we have designed an 8-bits computer
+        that could run simple programs with a maximum of 64 instructions.
+        We gave it the name Tineke, a Dutch female name.
+        <br>
+        Before building her, we have built a minimalised version of Tineke, called Gerda, for testing purposes.
+        She is programmed to find prime numbers. This takes a long time, because our simulator is not (yet) fast enough to
+        handle a higher clock speed. In our final computer Tineke we managed to upgrade the clock speed.
+        <br>
+        <div class="video">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/PlRRY20QS6o" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <a href="boards/gerda-primes.board" download><i class="material-icons">file_download</i>Download gerda-primes.board</a>
 
-      After a year of hard work we have finished Tineke. She has 640 bytes of RAM, a 17 Hz processor and
-      she is fully programmable.
-      <img src="img/tineke2.png">
-      <br>
-      The .zip file below contains the .board file of Tineke, the .board file of Tineke programmed to output prime numbers,
-      and a few schematics for programming Tineke.
-      <a href="boards/tineke.zip" download><i class="material-icons">file_download</i>Download tineke.zip</a>
-      <br>
+        <br>
+        After a year of hard work we have finished Tineke. She has 640 bytes of RAM, a 17 Hz processor and
+        she is fully programmable.
+        <img src="img/tineke2.png">
+        <br>
+        The .zip file below contains the .board file of Tineke, the .board file of Tineke programmed to output prime numbers,
+        and a few schematics for programming Tineke.
+        <a href="boards/tineke.zip" download><i class="material-icons">file_download</i>Download tineke.zip</a>
+        <br>
+      </div>
+
+      <button class="close material-icons">close</button>
+
+      <script>
+        (function() {
+          const boards = document.querySelector(".boards");
+          const img = boards.querySelectorAll("img");
+          const close = boards.querySelector(".close");
+          const visibleOverlay = document.querySelector(".visible-overlay");
+
+          for(let i of img) i.onclick = showImg;
+
+          function showImg() {
+            this.className = "fullscreen";
+
+            const ratio = this.clientHeight / this.clientWidth;
+            if((innerHeight - 200) / ratio < innerWidth) {
+              this.style.height = (innerHeight - 200) + "px";
+              this.style.width = (innerHeight - 200) / ratio + "px";
+              this.style.left = (innerWidth - (innerHeight - 200) / ratio) / 2 + "px";
+            } else {
+              this.style.height = "auto";
+              this.style.width = "100%";
+              this.style.top = (innerHeight - (innerWidth * ratio)) / 2 + "px";
+            }
+            close.style.display = "block";
+            visibleOverlay.style.display = "block";
+
+            close.onclick = hideImg;
+            visibleOverlay.onclick = hideImg;
+            document.onkeydown = hideImg;
+          }
+
+          const hideImg = () => {
+            for(let i of img) {
+              i.className = "";
+              i.style.height = "auto";
+              i.style.width = innerWidth < 600 ? "100%" : "600px";
+            }
+            close.style.display = "none";
+            visibleOverlay.style.display = "none";
+          }
+        })();
+      </script>
     </section>
 
     <footer class="footer">
