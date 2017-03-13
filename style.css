@@ -431,6 +431,12 @@ section h1 {
   color: #555;
 }
 
+.boards img {
+  box-shadow: 0 0 20px rgba(0,0,0,.25);
+  width: 100%;
+  margin: 20px auto;
+}
+
 .boards .video {
   box-shadow: 0 0 20px rgba(0,0,0,.25);
   height: 281px;
