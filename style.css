@@ -248,6 +248,22 @@ header .float a:hover {
   right: 100%;
 }
 
+@media only screen and (max-width: 600px) {
+  .downloadbtn {
+    padding: 20px;
+    width: 50%;
+    font-size: 16px;
+  }
+
+  .downloadbtn .inputport {
+    height: 20px;
+  }
+
+  .downloadbtn .outputport {
+    height: 20px;
+  }
+}
+
 section {
   position: relative;
   background: #ddd;
@@ -263,7 +279,7 @@ section h1 {
 }
 
 .about {
-  margin-top: 90vh;
+  margin-top: 85vh;
   box-shadow: 20px 0 20px rgba(0,0,0,.5);
 }
 
