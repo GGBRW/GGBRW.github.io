@@ -14,11 +14,11 @@ body {
   left: -50%;
   width: 200%;
   height: 200%;
-  -moz-filter: opacity(30%);
-  -webkit-filter: opacity(30%);
-  -o-filter: opacity(30%);
-  -ms-filter: opacity(30%);
-  filter: opacity(30%);
+  -moz-filter: opacity(20%);
+  -webkit-filter: opacity(20%);
+  -o-filter: opacity(20%);
+  -ms-filter: opacity(20%);
+  filter: opacity(20%);
 }
 
 .background video {
