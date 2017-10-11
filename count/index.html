@@ -1,11 +1,66 @@
 <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700,800,900" rel="stylesheet">
 <style>
-body { background: #eee; text-align: center }
-h1 { font-family: Montserrat; font-size: 300px; margin: 20px; }
-h2 { font-family: Montserrat; font-size: 50px; color: #888; }
+body { 
+    background: #fff; 
+    text-align: center; 
+}
+div {
+    height: 50%;
+    width: 80%;
+    position: absolute;
+    top:-50px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    margin: auto;
+}
+h1 { 
+    font-family: Montserrat; 
+    font-size: 300px; 
+    font-weight: 800;
+    margin: 20px; 
+    color: #000;
+}
+h2 { 
+    font-family: Montserrat; 
+    font-size: 50px; 
+    color: #444; 
+}
+
+.background {
+  position: fixed;
+  top: 0px;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  -moz-filter: opacity(10%);
+  -webkit-filter: opacity(10%);
+  -o-filter: opacity(10%);
+  -ms-filter: opacity(10%);
+  filter: opacity(10%);
+}
+
+.background video {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
+  min-height: 50%;
+  min-width: 50%;
+}
 </style>
-<h1 id="c"></h1>
-<h2>Downloads</h2>
+<div class="background">
+    <video loop muted autoplay poster="" class="fullscreen-bg__video">
+        <source src="../vid.mp4" type="video/mp4">
+    </video>
+</div>
+<div>
+    <h1 id="c"></h1>
+    <h2>Downloads</h2>
+</div>
 <script>
 function getDownloads() {
   x = new XMLHttpRequest();
