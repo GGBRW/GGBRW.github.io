@@ -7,10 +7,12 @@ h2 { font-family: Montserrat; font-size: 50px; color: #888; }
 <h1 id="c"></h1>
 <h2>Downloads</h2>
 <script>
-x = new XMLHttpRequest();
-x.open("GET", "https://api.github.com/repos/ggbrw/boolr/releases", false);
-x.send();
-aantal = 0;
-for(let i of JSON.parse(x.responseText)[0].assets) aantal += i['download_count'];
-c.innerHTML = aantal;
+setInterval(function() {
+  x = new XMLHttpRequest();
+  x.open("GET", "https://api.github.com/repos/ggbrw/boolr/releases", false);
+  x.send();
+  aantal = 0;
+  for(let i of JSON.parse(x.responseText)[0].assets) aantal += i['download_count'];
+  c.innerHTML = aantal;
+}, 5000);
 </script>
