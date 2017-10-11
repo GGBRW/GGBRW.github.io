@@ -1,80 +1,113 @@
 <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#111">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111">
 
-    <title>BOOLR | Download count</title>
-    <link rel="shortcut icon" type="image/png" href="../img/favicon.png"/>
+<title>BOOLR | Download count</title>
+<link rel="shortcut icon" type="image/png" href="../img/favicon.png"/>
 <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700,800,900" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
 <style>
 body { 
-    background: #fff; 
-    text-align: center; 
+background: #fff; 
+text-align: center; 
 }
-div {
-    height: 50%;
-    width: 80%;
-    position: absolute;
-    top:-50px;
-    bottom: 0;
-    left: 0;
-    right: 0;
+.logo {
+font-family: "Montserrat";
+font-weight: 800;
+font-size: 40px;
+color: #000;
+cursor: pointer;
+position: relative;
+top: 100px;
+}
 
-    margin: auto;
+.logo .material-icons {
+position: relative;
+-font-weight: 700;
+top: 5px;
+font-size: 40px;
+}
+
+.logo a {
+    margin-left: 20px;
+    font-size: 20px;
+    font-weight: 500;
+    position: relative;
+    top: 10px;
+}
+
+div {
+height: 50%;
+width: 80%;
+position: absolute;
+top:-50px;
+bottom: 0;
+left: 0;
+right: 0;
+
+margin: auto;
 }
 h1 { 
-    font-family: Montserrat; 
-    font-size: 300px; 
-    font-weight: 800;
-    margin: 20px; 
-    color: #000;
+font-family: Montserrat; 
+font-size: 300px; 
+font-weight: 800;
+margin: 20px; 
+color: #000;
 }
 h2 { 
-    font-family: Montserrat; 
-    font-size: 50px; 
-    color: #444; 
+font-family: Montserrat; 
+font-size: 50px; 
+color: #444; 
 }
 
 .background {
-  position: fixed;
-  top: 0px;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  -moz-filter: opacity(10%);
-  -webkit-filter: opacity(10%);
-  -o-filter: opacity(10%);
-  -ms-filter: opacity(10%);
-  filter: opacity(10%);
+position: fixed;
+top: 0px;
+left: -50%;
+width: 200%;
+height: 200%;
+-moz-filter: opacity(10%);
+-webkit-filter: opacity(10%);
+-o-filter: opacity(10%);
+-ms-filter: opacity(10%);
+filter: opacity(10%);
 }
 
 .background video {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  margin: auto;
-  min-height: 50%;
-  min-width: 50%;
+position: absolute;
+top: 0;
+bottom: 0;
+right: 0;
+left: 0;
+margin: auto;
+min-height: 50%;
+min-width: 50%;
 }
 </style>
 <div class="background">
-    <video loop muted autoplay poster="" class="fullscreen-bg__video">
-        <source src="../vid.mp4" type="video/mp4">
-    </video>
+<video loop muted autoplay poster="" class="fullscreen-bg__video">
+    <source src="../vid.mp4" type="video/mp4">
+</video>
 </div>
+<span class="logo" onclick="scrollTo(0,0)">
+<i class="material-icons">memory</i>
+BOOLR
+<br>
+<a>http://boolr.me</a>
+</span>
 <div>
-    <h1 id="c"></h1>
-    <h2>Downloads</h2>
+<h1 id="c"></h1>
+<h2>Downloads</h2>
 </div>
 <script>
 function getDownloads() {
-  x = new XMLHttpRequest();
-  x.open("GET", "https://api.github.com/repos/ggbrw/boolr/releases", false);
-  x.send();
-  aantal = 0;
-  for(let i of JSON.parse(x.responseText)[0].assets) aantal += i['download_count'];
-  c.innerHTML = aantal;
+x = new XMLHttpRequest();
+x.open("GET", "https://api.github.com/repos/ggbrw/boolr/releases", false);
+x.send();
+aantal = 0;
+for(let i of JSON.parse(x.responseText)[0].assets) aantal += i['download_count'];
+c.innerHTML = aantal;
 }
 getDownloads();
 setInterval(getDownloads, 5000);
