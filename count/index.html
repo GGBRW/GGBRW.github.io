@@ -84,13 +84,40 @@ margin: auto;
 min-height: 50%;
 min-width: 50%;
 }
+
+@media only screen and (max-width: 600px) {
+  .background video {
+    left: -50%;
+  }
+
+  .logo {
+      top: 5px;
+      font-size: 30px;
+  }
+
+  .logo .material-icons {
+    font-size: 30px;
+  }
+
+  .logo a {
+      font-size: 16px;
+  }
+
+  h1 {
+      font-size: 120px;
+  }
+
+  h2 {
+      font-size: 30px;
+  }
+}
 </style>
 <div class="background">
 <video loop muted autoplay poster="" class="fullscreen-bg__video">
     <source src="../vid.mp4" type="video/mp4">
 </video>
 </div>
-<span class="logo" onclick="scrollTo(0,0)">
+<span class="logo" onclick="location.href='http://boolr.me'">
 <i class="material-icons">memory</i>
 BOOLR
 <br>
